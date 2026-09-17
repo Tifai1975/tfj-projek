@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ORARI Aceh Besar - Implementation Plan</title>
+<style>
+body { font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 960px; margin: 0 auto; padding: 40px 30px; line-height: 1.7; font-size: 11pt; color: #222; }
+code { background: #f0f0f0; padding: 2px 5px; border-radius: 3px; font-size: 0.88em; }
+pre { background: #f5f5f5; padding: 14px 18px; border-radius: 6px; overflow-x: auto; border: 1px solid #e0e0e0; }
+pre code { background: none; padding: 0; font-size: 0.85em; }
+h1 { border-bottom: 2px solid #1a1a2e; padding-bottom: 8px; color: #1a1a2e; }
+h2 { border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 36px; color: #1a1a2e; }
+h3 { margin-top: 28px; color: #333; }
+table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+th { background: #f0f0f0; }
+blockquote { border-left: 4px solid #1a1a2e; margin: 16px 0; padding: 8px 16px; background: #f9f9f9; }
+hr { border: none; border-top: 2px solid #e0e0e0; margin: 32px 0; }
+@media print { body { font-size: 10pt; } pre { font-size: 8pt; page-break-inside: avoid; } }
+</style>
+</head>
+<body>
+<h1>ORARI Aceh Besar - Implementation Plan</h1>
+<p><em>Goal:</em> Full-stack membership management system with member registration, payment tracking, admin dashboard, and public information pages.</p>
+<hr>
+<h2>📋 Plan Overview</h2>
+<table>
+<tr><th>Phase</th><th>Description</th><th>Status</th></tr>
+<tr><td>1</td><td>Project Setup &amp; Infrastructure</td><td>✅ Planned</td></tr>
+<tr><td>2</td><td>Backend - Authentication (JWT, password hashing, register/login)</td><td>✅ Planned</td></tr>
+<tr><td>3</td><td>Backend - Member Management</td><td>✅ Planned</td></tr>
+<tr><td>4</td><td>Backend - Transactions (Manual Transfer with receipt upload)</td><td>✅ Planned</td></tr>
+<tr><td>5</td><td>Backend - Activities, News, Frequencies CRUD</td><td>✅ Planned</td></tr>
+<tr><td>6</td><td>Backend - Admin Features (reports, bulk email, analytics)</td><td>✅ Planned</td></tr>
+<tr><td>7</td><td>Frontend - Setup (Next.js, Shadcn/ui, TanStack Query)</td><td>✅ Planned</td></tr>
+<tr><td>8</td><td>Frontend - Public Pages (landing, about, news, activities)</td><td>✅ Planned</td></tr>
+<tr><td>9</td><td>Frontend - Auth Pages (login, register, reset password)</td><td>✅ Planned</td></tr>
+<tr><td>10</td><td>Frontend - Member Dashboard (profile, payments, upload receipt)</td><td>✅ Planned</td></tr>
+<tr><td>11</td><td>Frontend - Admin Dashboard (approve payments, reports, CRUD)</td><td>✅ Planned</td></tr>
+<tr><td>12</td><td>Docker Setup (Dockerfiles, docker-compose, Nginx)</td><td>✅ Planned</td></tr>
+<tr><td>13</td><td>Testing &amp; Deployment Documentation</td><td>✅ Planned</td></tr>
+</table>
+<p><strong>Total: ~67 bite-sized tasks | 5,050 lines in plan</strong></p>
+<hr>
+<h2>Tech Stack</h2>
+<ul>
+<li><strong>Frontend:</strong> Next.js 14 (App Router), TypeScript, Tailwind CSS, Shadcn/ui, React Hook Form + Zod, TanStack Query</li>
+<li><strong>Backend:</strong> Node.js + Express, Prisma ORM, JWT Auth, Bcrypt, Multer, Nodemailer</li>
+<li><strong>Database:</strong> SQLite (dev) → PostgreSQL 15+ (prod)</li>
+<li><strong>Payment:</strong> Manual bank transfer (member uploads receipt, admin approve/reject)</li>
+<li><strong>Email:</strong> SMTP (Gmail/SendGrid for password reset, bulk email)</li>
+<li><strong>DevOps:</strong> Docker Compose on self-hosted VPS, Nginx reverse proxy</li>
+</ul>
+<hr>
+<h2>Detailed Phases</h2>
+
+<h3>Phase 1: Project Setup &amp; Infrastructure</h3>
+<p><strong>Files:</strong> Directory structure, .gitignore, README.md, backend/package.json, tsconfig.json, Prisma schema.</p>
+<p>Initialize Express with TypeScript, Prisma with SQLite (dev), create 6 database models with full relationships.</p>
+
+<h3>Phase 2: Backend - Authentication</h3>
+<p><strong>Files:</strong> src/utils/jwt.ts, src/utils/password.ts, src/middleware/auth.ts, src/routes/auth.ts</p>
+<p>JWT access + refresh tokens, bcrypt password hashing, auth middleware with role-based authorization.</p>
+<ul>
+<li>POST /api/auth/register</li>
+<li>POST /api/auth/login</li>
+<li>POST /api/auth/refresh</li>
+<li>POST /api/auth/forgot-password</li>
+<li>POST /api/auth/reset-password</li>
+</ul>
+
+<h3>Phase 3: Backend - Member Management</h3>
+<p><strong>Files:</strong> src/routes/members.ts, src/utils/membership.ts</p>
+<ul>
+<li>GET /api/members/me - current user profile</li>
+<li>GET /api/members - admin list with pagination &amp; search</li>
+<li>GET /api/members/:id - view single member</li>
+<li>PUT /api/members/:id - update profile (self or admin)</li>
+<li>Membership expiry checker with 14-day grace period + auto-extend on payment</li>
+</ul>
+
+<h3>Phase 4: Backend - Transactions (Manual Transfer)</h3>
+<p><strong>Files:</strong> src/middleware/upload.ts, src/routes/transactions.ts</p>
+<ul>
+<li>POST /api/transactions - submit payment with receipt image (JPEG/PNG, max 5MB)</li>
+<li>GET /api/transactions - list with filters (member/status)</li>
+<li>PUT /api/transactions/:id/approve - admin approve + auto-extend membership</li>
+<li>PUT /api/transactions/:id/reject - admin reject with reason</li>
+</ul>
+
+<h3>Phase 5: Backend - Activities, News, Frequencies</h3>
+<p><strong>Files:</strong> src/routes/activities.ts, src/routes/news.ts, src/routes/frequencies.ts</p>
+<ul>
+<li>Full CRUD for each module (admin create/update/delete)</li>
+<li>Auto-generated slugs for news articles</li>
+<li>Public read endpoints: GET /api/public/*</li>
+</ul>
+
+<h3>Phase 6: Backend - Admin Features</h3>
+<p><strong>Files:</strong> src/routes/admin.ts, src/utils/email.ts</p>
+<ul>
+<li>GET /api/admin/dashboard - summary stats (total/active members, pending payments, revenue)</li>
+<li>GET /api/admin/reports/members - CSV export</li>
+<li>GET /api/admin/reports/transactions - CSV export</li>
+<li>POST /api/admin/email/bulk - send email to all active members</li>
+</ul>
+
+<h3>Phase 7: Frontend - Setup</h3>
+<p><strong>Files:</strong> frontend/ (Next.js scaffold), src/lib/api.ts, src/lib/auth-context.tsx, src/lib/query-provider.tsx</p>
+<ul>
+<li>Next.js 14 App Router with TypeScript</li>
+<li>Shadcn/ui components (Button, Card, Table, Badge, Dialog, Tabs, Select, etc.)</li>
+<li>TanStack Query + Axios API client with auto-refresh on 401</li>
+<li>Auth context with login/logout + role-based state</li>
+</ul>
+
+<h3>Phase 8: Frontend - Public Pages</h3>
+<p><strong>Path:</strong> frontend/src/app/(public)/</p>
+<ul>
+<li>Landing page with hero section + features overview</li>
+<li>About page (organization info, mission, leadership)</li>
+<li>Activities page (upcoming/past events, card layout)</li>
+<li>News page + detail page /news/[slug]</li>
+<li>Frequencies page (searchable table)</li>
+<li>Contact form page</li>
+<li>Navbar + Footer layout</li>
+</ul>
+
+<h3>Phase 9: Frontend - Auth Pages</h3>
+<p><strong>Path:</strong> frontend/src/app/(auth)/</p>
+<ul>
+<li>Login page (email/password, token storage, redirect)</li>
+<li>Register page (full form with callSign, phone, address)</li>
+<li>Forgot password page (email input)</li>
+<li>Reset password page /reset-password/[token]</li>
+</ul>
+
+<h3>Phase 10: Frontend - Member Dashboard</h3>
+<p><strong>Path:</strong> frontend/src/app/(member)/</p>
+<ul>
+<li>Sidebar layout (Dashboard, Profile, Payments, Activities)</li>
+<li>Dashboard home (membership status card, payment history, upcoming activities)</li>
+<li>Profile page (view/edit personal info)</li>
+<li>Payment page (upload receipt image + submit form)</li>
+<li>Transaction history (table with status badges, receipt preview)</li>
+</ul>
+
+<h3>Phase 11: Frontend - Admin Dashboard</h3>
+<p><strong>Path:</strong> frontend/src/app/(admin)/</p>
+<ul>
+<li>Admin layout with 8-section sidebar</li>
+<li>Dashboard home (stat cards + charts)</li>
+<li>Members management (table with search/filter, status badges)</li>
+<li>Payments management (table, receipt thumbnail modal, approve/reject buttons)</li>
+<li>Activities/News/Frequencies CRUD tables</li>
+<li>Reports page (download CSV buttons)</li>
+<li>Bulk email page (subject + message form)</li>
+</ul>
+
+<h3>Phase 12: Docker Setup</h3>
+<p><strong>Files:</strong> backend/Dockerfile, frontend/Dockerfile, nginx/default.conf, docker-compose.yml, docker-compose.dev.yml</p>
+<ul>
+<li>Node.js 18 Alpine Dockerfiles for backend + frontend</li>
+<li>Nginx reverse proxy config (/ → frontend:3000, /api → backend:5000, /uploads → backend static)</li>
+<li>Production docker-compose with PostgreSQL, backend, frontend, nginx</li>
+<li>Development docker-compose with hot reload</li>
+</ul>
+
+<h3>Phase 13: Testing &amp; Deployment Docs</h3>
+<p><strong>Files:</strong> prisma/seed.ts, docs/API.md, docs/DATABASE.md, docs/DEPLOYMENT.md, README.md</p>
+<ul>
+<li>Seed script (admin user + sample data)</li>
+<li>API documentation (all endpoints with method, path, auth, request/response)</li>
+<li>Database schema documentation</li>
+<li>Step-by-step VPS deployment guide</li>
+</ul>
+
+<hr>
+<h2>How to Proceed</h2>
+<p>The full detailed plan with complete code examples, exact commands, and git commit steps is in the markdown file at:</p>
+<p><code>~/.hermes/plans/2026-07-10-orari-aceh-besar-plan.md</code></p>
+<p><strong>Next steps after review:</strong></p>
+<ol>
+<li>Start implementation from Phase 1 using subagent-driven-development</li>
+<li>Each task follows TDD cycle: write test → verify fail → implement → verify pass → commit</li>
+<li>After backend complete → frontend → Docker → deploy to VPS</li>
+</ol>
+<hr>
+<p style="color:#888;font-size:0.9em;"><em>Generated: July 2026 | ORARI Aceh Besar Web Application Project</em></p>
+</body>
+</html>

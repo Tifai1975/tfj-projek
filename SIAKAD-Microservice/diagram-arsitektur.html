@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIAKAD Microservice Architecture</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: #020617;
+            color: #e2e8f0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #22d3ee;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #22d3ee;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .header p {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+        .diagram-container {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 1400px;
+            width: 100%;
+        }
+        svg { width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <span class="dot"></span>
+            SIAKAD Microservice Architecture
+        </h1>
+        <p>Sistem Informasi Akademik - Modular & Scalable</p>
+    </div>
+    
+    <div class="diagram-container">
+        <svg viewBox="0 0 1200 950" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid Pattern -->
+            <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+                </pattern>
+                
+                <!-- Arrow Markers -->
+                <marker id="arrow-cyan" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#22d3ee"/>
+                </marker>
+                <marker id="arrow-emerald" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#34d399"/>
+                </marker>
+                <marker id="arrow-violet" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#a78bfa"/>
+                </marker>
+                <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#fb923c"/>
+                </marker>
+            </defs>
+            
+            <!-- Background -->
+            <rect width="1200" height="950" fill="url(#grid)"/>
+            
+            <!-- Arrows - drawn first so they go behind boxes -->
+            <!-- API Gateway to Services -->
+            <path d="M 280 120 L 150 200" stroke="#22d3ee" stroke-width="1.5" fill="none" marker-end="url(#arrow-cyan)"/>
+            <path d="M 400 120 L 400 200" stroke="#22d3ee" stroke-width="1.5" fill="none" marker-end="url(#arrow-cyan)"/>
+            <path d="M 520 120 L 650 200" stroke="#22d3ee" stroke-width="1.5" fill="none" marker-end="url(#arrow-cyan)"/>
+            
+            <!-- Services to Message Bus -->
+            <path d="M 150 280 L 150 380" stroke="#34d399" stroke-width="1.5" fill="none" marker-end="url(#arrow-emerald)"/>
+            <path d="M 400 280 L 400 380" stroke="#34d399" stroke-width="1.5" fill="none" marker-end="url(#arrow-emerald)"/>
+            <path d="M 650 280 L 650 380" stroke="#34d399" stroke-width="1.5" fill="none" marker-end="url(#arrow-emerald)"/>
+            <path d="M 150 500 L 150 600" stroke="#34d399" stroke-width="1.5" fill="none" marker-end="url(#arrow-emerald)"/>
+            <path d="M 400 500 L 400 600" stroke="#34d399" stroke-width="1.5" fill="none" marker-end="url(#arrow-emerald)"/>
+            <path d="M 650 500 L 650 600" stroke="#34d399" stroke-width="1.5" fill="none" marker-end="url(#arrow-emerald)"/>
+            <path d="M 150 720 L 150 820" stroke="#34d399" stroke-width="1.5" fill="none" marker-end="url(#arrow-emerald)"/>
+            <path d="M 400 720 L 400 820" stroke="#34d399" stroke-width="1.5" fill="none" marker-end="url(#arrow-emerald)"/>
+            <path d="M 650 720 L 650 820" stroke="#34d399" stroke-width="1.5" fill="none" marker-end="url(#arrow-emerald)"/>
+            
+            <!-- API Gateway -->
+            <g id="api-gateway">
+                <rect x="250" y="50" width="300" height="70" rx="6" fill="#0f172a"/>
+                <rect x="250" y="50" width="300" height="70" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+                <text x="400" y="80" text-anchor="middle" fill="#22d3ee" font-size="14" font-weight="600">API Gateway / BFF</text>
+                <text x="400" y="100" text-anchor="middle" fill="#94a3b8" font-size="9">Auth • Rate Limiting • Routing</text>
+            </g>
+            
+            <!-- Row 1: Core Services -->
+            <g id="mahasiswa-service">
+                <rect x="50" y="200" width="200" height="80" rx="6" fill="#0f172a"/>
+                <rect x="50" y="200" width="200" height="80" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+                <text x="150" y="230" text-anchor="middle" fill="#34d399" font-size="12" font-weight="600">Mahasiswa Service</text>
+                <text x="150" y="248" text-anchor="middle" fill="#94a3b8" font-size="8">Profile • Enrollment</text>
+                <text x="150" y="263" text-anchor="middle" fill="#94a3b8" font-size="8">Status • History</text>
+            </g>
+            
+            <g id="dosen-service">
+                <rect x="300" y="200" width="200" height="80" rx="6" fill="#0f172a"/>
+                <rect x="300" y="200" width="200" height="80" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+                <text x="400" y="230" text-anchor="middle" fill="#34d399" font-size="12" font-weight="600">Dosen Service</text>
+                <text x="400" y="248" text-anchor="middle" fill="#94a3b8" font-size="8">Profile • Teaching</text>
+                <text x="400" y="263" text-anchor="middle" fill="#94a3b8" font-size="8">Schedule • Load</text>
+            </g>
+            
+            <g id="akademik-service">
+                <rect x="550" y="200" width="200" height="80" rx="6" fill="#0f172a"/>
+                <rect x="550" y="200" width="200" height="80" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+                <text x="650" y="230" text-anchor="middle" fill="#34d399" font-size="12" font-weight="600">Akademik Structure</text>
+                <text x="650" y="248" text-anchor="middle" fill="#94a3b8" font-size="8">Fakultas • Jurusan</text>
+                <text x="650" y="263" text-anchor="middle" fill="#94a3b8" font-size="8">Prodi • Periods</text>
+            </g>
+            
+            <!-- Message Bus Layer -->
+            <g id="message-bus">
+                <rect x="50" y="320" width="700" height="50" rx="6" fill="#0f172a"/>
+                <rect x="50" y="320" width="700" height="50" rx="6" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1.5"/>
+                <text x="400" y="345" text-anchor="middle" fill="#fb923c" font-size="12" font-weight="600">Message Bus (Event Stream)</text>
+                <text x="400" y="360" text-anchor="middle" fill="#94a3b8" font-size="8">RabbitMQ / Kafka / Redis Streams</text>
+            </g>
+            
+            <!-- Row 2: Academic Services -->
+            <g id="kurikulum-service">
+                <rect x="50" y="420" width="200" height="80" rx="6" fill="#0f172a"/>
+                <rect x="50" y="420" width="200" height="80" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+                <text x="150" y="450" text-anchor="middle" fill="#34d399" font-size="12" font-weight="600">Kurikulum Service</text>
+                <text x="150" y="468" text-anchor="middle" fill="#94a3b8" font-size="8">Curriculum • Courses</text>
+                <text x="150" y="483" text-anchor="middle" fill="#94a3b8" font-size="8">Prerequisites</text>
+            </g>
+            
+            <g id="jadwal-service">
+                <rect x="300" y="420" width="200" height="80" rx="6" fill="#0f172a"/>
+                <rect x="300" y="420" width="200" height="80" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+                <text x="400" y="450" text-anchor="middle" fill="#34d399" font-size="12" font-weight="600">Jadwal Service</text>
+                <text x="400" y="468" text-anchor="middle" fill="#94a3b8" font-size="8">Class Schedule</text>
+                <text x="400" y="483" text-anchor="middle" fill="#94a3b8" font-size="8">Room • Conflict Detection</text>
+            </g>
+            
+            <g id="krs-service">
+                <rect x="550" y="420" width="200" height="80" rx="6" fill="#0f172a"/>
+                <rect x="550" y="420" width="200" height="80" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+                <text x="650" y="450" text-anchor="middle" fill="#34d399" font-size="12" font-weight="600">KRS Service</text>
+                <text x="650" y="468" text-anchor="middle" fill="#94a3b8" font-size="8">Registration • Validation</text>
+                <text x="650" y="483" text-anchor="middle" fill="#94a3b8" font-size="8">Approval • Session Cache</text>
+            </g>
+            
+            <!-- Message Bus Layer 2 -->
+            <g id="message-bus-2">
+                <rect x="50" y="540" width="700" height="50" rx="6" fill="#0f172a"/>
+                <rect x="50" y="540" width="700" height="50" rx="6" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1.5"/>
+                <text x="400" y="565" text-anchor="middle" fill="#fb923c" font-size="12" font-weight="600">Event Stream</text>
+                <text x="400" y="580" text-anchor="middle" fill="#94a3b8" font-size="8">Async Communication</text>
+            </g>
+            
+            <!-- Row 3: Output Services -->
+            <g id="khs-service">
+                <rect x="50" y="640" width="200" height="80" rx="6" fill="#0f172a"/>
+                <rect x="50" y="640" width="200" height="80" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+                <text x="150" y="670" text-anchor="middle" fill="#34d399" font-size="12" font-weight="600">KHS Service</text>
+                <text x="150" y="688" text-anchor="middle" fill="#94a3b8" font-size="8">Grades • GPA Calc</text>
+                <text x="150" y="703" text-anchor="middle" fill="#94a3b8" font-size="8">Academic Standing</text>
+            </g>
+            
+            <g id="transkrip-service">
+                <rect x="300" y="640" width="200" height="80" rx="6" fill="#0f172a"/>
+                <rect x="300" y="640" width="200" height="80" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+                <text x="400" y="670" text-anchor="middle" fill="#34d399" font-size="12" font-weight="600">Transkrip Service</text>
+                <text x="400" y="688" text-anchor="middle" fill="#94a3b8" font-size="8">Transcript • Graduation</text>
+                <text x="400" y="703" text-anchor="middle" fill="#94a3b8" font-size="8">Certificate</text>
+            </g>
+            
+            <g id="reporting-service">
+                <rect x="550" y="640" width="200" height="80" rx="6" fill="#0f172a"/>
+                <rect x="550" y="640" width="200" height="80" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+                <text x="650" y="670" text-anchor="middle" fill="#34d399" font-size="12" font-weight="600">Reporting Service</text>
+                <text x="650" y="688" text-anchor="middle" fill="#94a3b8" font-size="8">PDDIKTI Integration</text>
+                <text x="650" y="703" text-anchor="middle" fill="#94a3b8" font-size="8">Analytics • Dashboard</text>
+            </g>
+            
+            <!-- Shared Infrastructure -->
+            <g id="shared-infra">
+                <rect x="50" y="760" width="700" height="70" rx="6" fill="#0f172a"/>
+                <rect x="50" y="760" width="700" height="70" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+                <text x="400" y="790" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="600">Shared Infrastructure</text>
+                <text x="400" y="808" text-anchor="middle" fill="#94a3b8" font-size="8">Auth Service • Notification • File Storage • Logging • Monitoring</text>
+            </g>
+            
+            <!-- Database Icons -->
+            <g id="databases">
+                <circle cx="900" cy="240" r="40" fill="#0f172a"/>
+                <circle cx="900" cy="240" r="40" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+                <text x="900" y="238" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="600">PostgreSQL</text>
+                <text x="900" y="252" text-anchor="middle" fill="#94a3b8" font-size="7">Per Service DB</text>
+                
+                <circle cx="900" cy="460" r="40" fill="#0f172a"/>
+                <circle cx="900" cy="460" r="40" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+                <text x="900" y="458" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="600">Redis</text>
+                <text x="900" y="472" text-anchor="middle" fill="#94a3b8" font-size="7">Cache Layer</text>
+                
+                <circle cx="900" cy="680" r="40" fill="#0f172a"/>
+                <circle cx="900" cy="680" r="40" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+                <text x="900" y="678" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="600">TimescaleDB</text>
+                <text x="900" y="692" text-anchor="middle" fill="#94a3b8" font-size="7">Metrics</text>
+            </g>
+            
+            <!-- Arrows to DBs -->
+            <path d="M 750 240 L 860 240" stroke="#a78bfa" stroke-width="1.5" fill="none" marker-end="url(#arrow-violet)"/>
+            <path d="M 750 460 L 860 460" stroke="#a78bfa" stroke-width="1.5" fill="none" marker-end="url(#arrow-violet)"/>
+            <path d="M 750 680 L 860 680" stroke="#a78bfa" stroke-width="1.5" fill="none" marker-end="url(#arrow-violet)"/>
+            
+            <!-- Legend -->
+            <g id="legend" transform="translate(850, 780)">
+                <text x="0" y="0" fill="#94a3b8" font-size="9" font-weight="600">Legend:</text>
+                <circle cx="5" cy="15" r="4" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+                <text x="15" y="19" fill="#94a3b8" font-size="7">Services</text>
+                <circle cx="5" cy="30" r="4" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+                <text x="15" y="34" fill="#94a3b8" font-size="7">Databases</text>
+                <circle cx="5" cy="45" r="4" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1"/>
+                <text x="15" y="49" fill="#94a3b8" font-size="7">Message Bus</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

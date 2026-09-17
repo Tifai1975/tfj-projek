@@ -1,0 +1,204 @@
+{
+  "slide_size": "16:9",
+  "slides": [
+    {
+      "layout": "title",
+      "title": "SISTEM INFORMASI AKADEMIK",
+      "subtitle": "Arsitektur Microservice Modern untuk Perguruan Tinggi Indonesia\n\nPresentation for Client Review",
+      "background": "1a1a2e",
+      "footer": "SIAKAD Microservice | Confidential"
+    },
+    {
+      "layout": "title_content",
+      "title": "Tantangan Sistem Akademik Saat Ini",
+      "bullets": [
+        {"text": "Biaya Lisensi Tinggi", "level": 0, "bold": true, "color": "e74c3c"},
+        {"text": "Sevima SIAKAD Cloud: Rp 50-200 juta/tahun untuk institusi menengah", "level": 1, "size": 14},
+        {"text": "Vendor internasional tidak cocok untuk compliance PDDIKTI Indonesia", "level": 1, "size": 14},
+        {"text": "Performance Buruk Saat Peak Load", "level": 0, "bold": true, "color": "e74c3c"},
+        {"text": "Sistem monolitik lambat saat ribuan mahasiswa registrasi KRS bersamaan", "level": 1, "size": 14},
+        {"text": "Downtime diperlukan untuk setiap update atau bug fix", "level": 1, "size": 14},
+        {"text": "Keterbatasan Customization", "level": 0, "bold": true, "color": "e74c3c"},
+        {"text": "Sulit menyesuaikan workflow akademik spesifik institusi", "level": 1, "size": 14},
+        {"text": "Tergantung pada vendor untuk setiap perubahan", "level": 1, "size": 14},
+        {"text": "Kompleksitas Integrasi", "level": 0, "bold": true, "color": "e74c3c"},
+        {"text": "Laporan PDDIKTI memerlukan manual intervention", "level": 1, "size": 14},
+        {"text": "Integrasi dengan sistem lain (perpustakaan, keuangan) kompleks", "level": 1, "size": 14}
+      ],
+      "footer": "SIAKAD Microservice | Problem Statement"
+    },
+    {
+      "layout": "title_content",
+      "title": "Solusi: SIAKAD Berbasis Microservice",
+      "bullets": [
+        {"text": "Modular & Scalable Architecture", "level": 0, "bold": true, "color": "27ae60"},
+        {"text": "9 microservices independen yang dapat di-scale sesuai kebutuhan", "level": 1, "size": 14},
+        {"text": "Mahasiswa, Dosen, Akademik, Kurikulum, Jadwal, KRS, KHS, Transkrip, Reporting", "level": 1, "size": 13},
+        {"text": "Performance & Reliability", "level": 0, "bold": true, "color": "27ae60"},
+        {"text": "Response time < 2 detik untuk 5000+ concurrent users saat peak KRS", "level": 1, "size": 14},
+        {"text": "99.5% uptime dengan independent deployment per service", "level": 1, "size": 14},
+        {"text": "Cost Efficiency", "level": 0, "bold": true, "color": "27ae60"},
+        {"text": "ROI positif dalam 24 bulan dengan eliminasi biaya lisensi vendor", "level": 1, "size": 14},
+        {"text": "Infrastructure cost yang predictable dan scalable", "level": 1, "size": 14},
+        {"text": "PDDIKTI Compliance", "level": 0, "bold": true, "color": "27ae60"},
+        {"text": "Generate laporan PDDIKTI otomatis < 4 jam (vs 40 jam manual)", "level": 1, "size": 14},
+        {"text": "Built-in compliance dengan Standar Nasional Pendidikan Tinggi", "level": 1, "size": 14}
+      ],
+      "footer": "SIAKAD Microservice | Solution Overview"
+    },
+    {
+      "layout": "title_only",
+      "title": "Arsitektur Microservice",
+      "footer": "SIAKAD Microservice | Architecture"
+    },
+    {
+      "layout": "title_content",
+      "title": "9 Microservices Core",
+      "bullets": [
+        {"text": "Layer 1: Master Data", "level": 0, "bold": true, "color": "3498db"},
+        {"text": "Mahasiswa Service - Profile, enrollment, status mahasiswa", "level": 1, "size": 13},
+        {"text": "Dosen Service - Profile dosen, teaching assignments, academic rank", "level": 1, "size": 13},
+        {"text": "Akademik Structure Service - Fakultas, Jurusan, Prodi hierarchy", "level": 1, "size": 13},
+        {"text": "Layer 2: Academic Operations", "level": 0, "bold": true, "color": "9b59b6"},
+        {"text": "Kurikulum Service - Curriculum design, course catalog, prerequisites", "level": 1, "size": 13},
+        {"text": "Jadwal Service - Class scheduling, room allocation, conflict detection", "level": 1, "size": 13},
+        {"text": "KRS Service - Course registration, validation, approval workflow + Redis cache", "level": 1, "size": 13},
+        {"text": "Layer 3: Output & Analytics", "level": 0, "bold": true, "color": "e67e22"},
+        {"text": "KHS Service - Grade entry, GPA calculation, academic standing", "level": 1, "size": 13},
+        {"text": "Transkrip Service - Academic transcript, graduation requirements", "level": 1, "size": 13},
+        {"text": "Reporting Service - PDDIKTI integration, analytics, dashboards", "level": 1, "size": 13}
+      ],
+      "footer": "SIAKAD Microservice | Core Services"
+    },
+    {
+      "layout": "title_content",
+      "title": "Technology Stack",
+      "bullets": [
+        {"text": "Backend Services", "level": 0, "bold": true, "color": "2ecc71"},
+        {"text": "Node.js / Go - High-performance, concurrent request handling", "level": 1, "size": 14},
+        {"text": "REST API dengan OpenAPI specification untuk setiap service", "level": 1, "size": 14},
+        {"text": "Database & Storage", "level": 0, "bold": true, "color": "9b59b6"},
+        {"text": "PostgreSQL - Primary database untuk setiap microservice", "level": 1, "size": 14},
+        {"text": "Redis - Session cache & high-speed data access untuk KRS peak load", "level": 1, "size": 14},
+        {"text": "TimescaleDB - Time-series metrics untuk analytics & reporting", "level": 1, "size": 14},
+        {"text": "Message Queue & Events", "level": 0, "bold": true, "color": "e74c3c"},
+        {"text": "RabbitMQ / Kafka / Redis Streams - Async communication antar services", "level": 1, "size": 14},
+        {"text": "Event-driven architecture untuk data consistency", "level": 1, "size": 14},
+        {"text": "Deployment & Infrastructure", "level": 0, "bold": true, "color": "3498db"},
+        {"text": "Docker + Kubernetes - Container orchestration & auto-scaling", "level": 1, "size": 14},
+        {"text": "CI/CD pipeline untuk automated testing & deployment", "level": 1, "size": 14}
+      ],
+      "footer": "SIAKAD Microservice | Technology"
+    },
+    {
+      "layout": "title_content",
+      "title": "Key Benefits",
+      "bullets": [
+        {"text": "Untuk Institusi", "level": 0, "bold": true, "color": "f39c12"},
+        {"text": "✓ Cost savings: Eliminasi biaya lisensi tahunan vendor", "level": 1, "size": 14},
+        {"text": "✓ Full data ownership & control", "level": 1, "size": 14},
+        {"text": "✓ Customizable workflow sesuai kebutuhan institusi", "level": 1, "size": 14},
+        {"text": "Untuk Mahasiswa", "level": 0, "bold": true, "color": "3498db"},
+        {"text": "✓ Registrasi KRS cepat bahkan saat peak load (< 2 detik)", "level": 1, "size": 14},
+        {"text": "✓ Akses real-time ke KHS dan transkrip nilai", "level": 1, "size": 14},
+        {"text": "✓ Notifikasi otomatis untuk jadwal dan pengumuman", "level": 1, "size": 14},
+        {"text": "Untuk Dosen & Admin", "level": 0, "bold": true, "color": "27ae60"},
+        {"text": "✓ Input nilai yang mudah dengan validation otomatis", "level": 1, "size": 14},
+        {"text": "✓ Generate laporan PDDIKTI < 4 jam (otomatis)", "level": 1, "size": 14},
+        {"text": "✓ Dashboard real-time untuk KPI akademik", "level": 1, "size": 14},
+        {"text": "Untuk IT & Operations", "level": 0, "bold": true, "color": "9b59b6"},
+        {"text": "✓ Zero-downtime deployment per service", "level": 1, "size": 14},
+        {"text": "✓ Easy scaling untuk handle peak load", "level": 1, "size": 14}
+      ],
+      "footer": "SIAKAD Microservice | Benefits"
+    },
+    {
+      "layout": "title_content",
+      "title": "Implementation Roadmap",
+      "bullets": [
+        {"text": "Phase 1: Foundation (Month 1-3)", "level": 0, "bold": true, "color": "3498db"},
+        {"text": "Infrastructure setup - Kubernetes cluster, CI/CD pipeline", "level": 1, "size": 13},
+        {"text": "Core services: Mahasiswa, Dosen, Akademik Structure", "level": 1, "size": 13},
+        {"text": "Authentication & authorization system", "level": 1, "size": 13},
+        {"text": "Phase 2: Academic Core (Month 4-6)", "level": 0, "bold": true, "color": "9b59b6"},
+        {"text": "Kurikulum & Jadwal services dengan conflict detection", "level": 1, "size": 13},
+        {"text": "KRS service dengan Redis caching untuk performance", "level": 1, "size": 13},
+        {"text": "Message bus integration untuk event-driven communication", "level": 1, "size": 13},
+        {"text": "Phase 3: Output & Analytics (Month 7-9)", "level": 0, "bold": true, "color": "e67e22"},
+        {"text": "KHS service dengan GPA calculation engine", "level": 1, "size": 13},
+        {"text": "Transkrip service & graduation requirements tracking", "level": 1, "size": 13},
+        {"text": "Reporting service dengan PDDIKTI integration", "level": 1, "size": 13},
+        {"text": "Phase 4: Pilot & GA (Month 10-12)", "level": 0, "bold": true, "color": "27ae60"},
+        {"text": "Pilot program dengan 1 fakultas (200-500 mahasiswa)", "level": 1, "size": 13},
+        {"text": "Performance tuning & user feedback iteration", "level": 1, "size": 13},
+        {"text": "General Availability rollout ke seluruh institusi", "level": 1, "size": 13}
+      ],
+      "footer": "SIAKAD Microservice | Roadmap"
+    },
+    {
+      "layout": "two_content",
+      "title": "Comparison: SIAKAD Microservice vs Sevima",
+      "bullets": [
+        {"text": "SIAKAD Microservice (Kami)", "level": 0, "bold": true, "color": "27ae60", "size": 16},
+        {"text": "✓ One-time development cost", "level": 0, "size": 14},
+        {"text": "✓ Full source code ownership", "level": 0, "size": 14},
+        {"text": "✓ Unlimited customization", "level": 0, "size": 14},
+        {"text": "✓ Independent scaling per module", "level": 0, "size": 14},
+        {"text": "✓ Zero vendor lock-in", "level": 0, "size": 14},
+        {"text": "✓ < 2 sec response (peak load)", "level": 0, "size": 14},
+        {"text": "✓ Deploy updates tanpa downtime", "level": 0, "size": 14},
+        {"text": "✓ Full data control & privacy", "level": 0, "size": 14},
+        {"text": "✓ PDDIKTI automated (< 4 jam)", "level": 0, "size": 14},
+        {"text": "✓ ROI: 24 bulan", "level": 0, "size": 14}
+      ],
+      "footer": "SIAKAD Microservice | Competitive Analysis"
+    },
+    {
+      "layout": "title_content",
+      "title": "Success Metrics & KPIs",
+      "bullets": [
+        {"text": "Performance Targets", "level": 0, "bold": true, "color": "3498db"},
+        {"text": "Response time < 2 detik untuk 5000+ concurrent users (p95)", "level": 1, "size": 14},
+        {"text": "99.5% system uptime selama semester aktif", "level": 1, "size": 14},
+        {"text": "Zero-downtime deployment untuk service updates", "level": 1, "size": 14},
+        {"text": "Adoption Targets", "level": 0, "bold": true, "color": "27ae60"},
+        {"text": "95% mahasiswa menggunakan sistem untuk KRS online (semester ke-3)", "level": 1, "size": 14},
+        {"text": "85% dosen input nilai via sistem (semester ke-2)", "level": 1, "size": 14},
+        {"text": "CSAT ≥ 4.2/5.0 dari seluruh user groups", "level": 1, "size": 14},
+        {"text": "Operational Efficiency", "level": 0, "bold": true, "color": "e67e22"},
+        {"text": "Generate laporan PDDIKTI < 4 jam (automated vs 40 jam manual)", "level": 1, "size": 14},
+        {"text": "< 0.5% error rate untuk pelaporan PDDIKTI", "level": 1, "size": 14},
+        {"text": "90% reduction dalam waktu manual data entry", "level": 1, "size": 14}
+      ],
+      "footer": "SIAKAD Microservice | Success Metrics"
+    },
+    {
+      "layout": "title_content",
+      "title": "Next Steps",
+      "bullets": [
+        {"text": "1. Discovery Workshop", "level": 0, "bold": true, "size": 16, "color": "3498db"},
+        {"text": "Detailed requirement gathering dengan stakeholders", "level": 1, "size": 14},
+        {"text": "Review existing data & workflow akademik institusi", "level": 1, "size": 14},
+        {"text": "Finalize technical specifications & architecture details", "level": 1, "size": 14},
+        {"text": "", "level": 0},
+        {"text": "2. Project Kickoff", "level": 0, "bold": true, "size": 16, "color": "27ae60"},
+        {"text": "Form project team & assign roles", "level": 1, "size": 14},
+        {"text": "Setup development environment & infrastructure", "level": 1, "size": 14},
+        {"text": "Sprint planning untuk Phase 1 (Foundation)", "level": 1, "size": 14},
+        {"text": "", "level": 0},
+        {"text": "3. Development & Delivery", "level": 0, "bold": true, "size": 16, "color": "e67e22"},
+        {"text": "12-month implementation timeline", "level": 1, "size": 14},
+        {"text": "Bi-weekly sprint demos & stakeholder reviews", "level": 1, "size": 14},
+        {"text": "Pilot program → Beta → General Availability", "level": 1, "size": 14}
+      ],
+      "footer": "SIAKAD Microservice | Next Steps"
+    },
+    {
+      "layout": "title",
+      "title": "Thank You",
+      "subtitle": "Siap mendiskusikan detail teknis dan kebutuhan institusi Anda\n\nKontak: [Your Contact Information]\nEmail: [Your Email]\nWebsite: [Your Website]",
+      "background": "1a1a2e",
+      "footer": "SIAKAD Microservice | Q&A"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+*.log
+
+# IDE / OS
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+*.suo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Embedded repos (should be submodules)
+ORLOK-ACEH-BESAR/
+orari-aceh-besar/
+sipeg-usk-2027/
+sipel-usk-2027/
+Apliokasi Kepegawaian/
+simpeg-usk-2027/
+
+# Large files
+*.pdf
+*.docx
+*.zip
+*.mov
+*.mp4
+*.pptx
+*.xlsx
+
+# Cache
+.cache/
+*.tsbuildinfo

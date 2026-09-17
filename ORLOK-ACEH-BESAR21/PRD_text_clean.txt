@@ -1,0 +1,157 @@
+# Product Requirements Document (PRD)
+## ORLOK Aceh Besar — Portal Informasi & Transaksi Anggota ORARI Lokal Aceh Besar
+
+**Status**: Draft  
+**Author**: Teuku Faisal Jumaidin (Pak Faisal)  
+**Last Updated**: 2026-09-13  
+**Version**: 1.0  
+**Stakeholders**: Pak Faisal (Owner/Developer), ORARI Lokal Aceh Besar (user final)
+
+---
+
+## 1. Problem Statement
+
+ORARI Lokal Aceh Besar kehilangan sistem digital untuk:
+1. Memublikasikan berita & pengumuman ke anggota & publik.
+2. Menampilkan galeri foto kegiatan organisasi.
+3. Menerima pendaftaran anggota baru & iuran tahunan secara online.
+4. Memverifikasi bukti transfer secara manual oleh admin.
+
+Saat ini belum ada portal online; informasi tersebar di grup WhatsApp & media sosial, sulit diakses calon anggota, dan tidak ada jejak digital transaksi.
+
+**Target user**:
+- Anggota ORARI Aceh Besar (pribadi, callsign YB6XXX)
+- Calon anggota baru (DAFTAR_BARU)
+- Admin organisasi (1+ orang, verifikasi transaksi & publis konten)
+- Publik (landing page & pengumuman)
+
+---
+
+## 2. Goals & Success Metrics
+
+| Goal | Metric | Target |
+|------|--------|--------|
+| Pendaftaran anggota baru | Registrasi/bulan | ≥ 5 orang/bulan |
+| Transaksi iuran | Iuran terlunaskan | ≥ 70% anggota aktif |
+| Publikasi berita | Berita terpublikasi/bulan | ≥ 4 berita |
+| Admin efficiency | Waktu verifikasi transaksi | 
+ Next.js (frontend :3000) ──API──> FastAPI (backend :8000) ──SQL──> PostgreSQL/SQLite
+```
+
+### Fitur Utama
+1. **Landing Page** (`/`) — statistik, pengumuman, agenda kegiatan
+2. **Auth** — register, login, auto-login after register
+3. **Dashboard Anggota** — profil, transaksi, bukti transfer
+4. **Admin Panel** — verifikasi transaksi, edit anggota, pengumuman, kegiatan
+5. **Berita** — CRUD dengan image upload (admin only)
+6. **Galeri** — CRUD dengan image upload wajib (admin only)
+
+### Keputusan Teknis Utama
+- Backend FastAPI (async, modern, lightweight) — menggantikan Flask
+- SQLAlchemy 2.0 async + SQLite (dev) / PostgreSQL (prod)
+- JWT auth, role-based (ADMIN / UMUM / ANGGOTA)
+- Image upload: multipart file → `uploads/berita/` & `uploads/galeri/`, UUID filename, max 10MB
+- Frontend Next.js + Tailwind, environment variable `NEXT_PUBLIC_API_URL`
+
+---
+
+## 6. API Reference (FastAPI)
+
+### Auth
+| Method | Endpoint | Role | Body | Response |
+|--------|----------|------|------|----------|
+| POST | `/api/auth/register` | Public | `{email, password, nama, callsign?}` | `{user} + 201` |
+| POST | `/api/auth/login` | Public | `{email, password}` | `{token, user} + 200` |
+| GET | `/api/auth/me` | Auth | - | `{user} + 200` |
+
+### Berita (Admin Only - Create/Update/Delete)
+| Method | Endpoint | Role | Body | Response |
+|--------|----------|------|------|----------|
+| GET | `/api/berita` | Public | - | `[{berita}] + 200` |
+| GET | `/api/berita/:id` | Public | - | `{berita} + 200` |
+| POST | `/api/berita` | Admin | `{judul, konten, image?}` | `{berita} + 201` |
+| PUT | `/api/berita/:id` | Admin | `{judul?, konten?, image?}` | `{berita} + 200` |
+| DELETE | `/api/berita/:id` | Admin | - | `204` |
+
+### Galeri (Admin Only - Create/Update/Delete, image required)
+| Method | Endpoint | Role | Body | Response |
+|--------|----------|------|------|----------|
+| GET | `/api/galeri` | Public | - | `[{galeri}] + 200` |
+| GET | `/api/galeri/:id` | Public | - | `{galeri} + 200` |
+| POST | `/api/galeri` | Admin | `{judul?, deskripsi?, image (required)}` | `{galeri} + 201` |
+| PUT | `/api/galeri/:id` | Admin | `{judul?, deskripsi?, image?}` | `{galeri} + 200` |
+| DELETE | `/api/galeri/:id` | Admin | - | `204` |
+
+### Transaksi
+| Method | Endpoint | Role | Body | Response |
+|--------|----------|------|------|----------|
+| POST | `/api/transactions` | Anggota | `{type, jumlah, buktiTransfer?, keterangan?}` | `{tx} + 201` |
+| GET | `/api/transactions` | Anggota | - | `[{tx}] + 200` |
+| POST | `/api/admin/transactions/:id/approve` | Admin | `{action: APPROVE\|REJECT}` | `{tx} + 200` |
+
+### Admin
+| Method | Endpoint | Role | Response |
+|--------|----------|------|----------|
+| GET | `/api/admin/stats` | Admin | `{total_users}` |
+| GET | `/api/dashboard/stats` | Public | `{active_members_count, near_expired[], announcements[], activities[]}` |
+
+### Lainnya
+| Method | Endpoint | Role | Body | Response |
+|--------|----------|------|------|----------|
+| GET | `/api/announcements` | Public | - | `[{pengumuman}]` |
+| POST | `/api/announcements` | Admin | `{judul, konten}` | `{pengumuman} + 201` |
+| GET | `/api/kegiatan` | Public | - | `[{kegiatan}]` |
+| POST | `/api/kegiatan` | Admin | `{nama, tanggal, lokasi, deskripsi?}` | `{kegiatan} + 201` |
+| GET | `/api/members` | Auth | - | `[{user}]` |
+| PUT | `/api/profile/update` | Auth | `{nama?, callsign?, alamat?, noHp?}` | `{user} + 200` |
+| PUT | `/api/admin/members/:id` | Admin | `{nama?, callsign?, noAnggota?, role?, status?}` | `{user} + 200` |
+
+---
+
+## 7. Database Schema (SQLAlchemy)
+
+### User
+- `id` (UUID PK), `email` (UNIQUE), `password` (bcrypt), `role` (UMUM/ANGGOTA/ADMIN), `callsign`, `nama`, `noAnggota`, `status` (PENDING/AKTIF/EXPIRED), `expiredAt`, `alamat`, `noHp`, `createdAt`, `updatedAt`
+
+### Transaksi
+- `id` (UUID PK), `userId` (FK), `type` (DAFTAR_BARU/IURAN/DONASI/MERCHANDISE), `jumlah`, `buktiTransfer`, `keterangan`, `status` (PENDING/SUKSES/GAGAL), `createdAt`, `updatedAt`
+
+### Berita (NEW)
+- `id` (UUID PK), `judul`, `konten`, `image_url`, `createdAt`, `updatedAt`
+
+### Galeri (NEW)
+- `id` (UUID PK), `judul`, `deskripsi`, `image_url`, `createdAt`, `updatedAt`
+
+### Pengumuman
+- `id` (UUID PK), `judul`, `konten`, `createdAt`, `updatedAt`
+
+### Kegiatan
+- `id` (UUID PK), `nama`, `tanggal`, `lokasi`, `deskripsi`, `createdAt`, `updatedAt`
+
+---
+
+## 8. Launch Plan
+
+| Phase | Date | Audience | Success Gate |
+|-------|------|----------|--------------|
+| Internal alpha | Week 1 | Developer + 1 tester | No P0 bugs, auth + CRUD works |
+| Closed beta | Week 2 | 5 anggota ORARI | 
+ 5% OR auth failure > 1% → revert ke versi sebelumnya, page developer.
+
+---
+
+## 9. Open Questions
+
+- [ ] Domain name & hosting VPS spesifikasi?
+- [ ] Rekening bank tujuan iuran (siapa nama rekeningnya?)
+- [ ] Batch berita/galeri awal dari mana? (import manual atau kosongkan dulu?)
+- [ ] Backup & restore database — jadwal?
+- [ ] Akses admin: 1 akun admin tetap, atau bisa multiple admin?
+
+---
+
+## 10. Appendix
+
+- Tech Stack: Next.js 14, React 18, Tailwind CSS, FastAPI, SQLAlchemy 2.0 async, PostgreSQL/SQLite, JWT
+- Direktori proyek: `/Users/tfj/Documents/Projek Hermes/ORLOK-ACEH-BESAR`
+- PRD versi 1.0 — 2026-09-13

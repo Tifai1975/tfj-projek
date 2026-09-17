@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      String   @default("UMUM")
+  callsign  String?  @unique
+  nama      String
+  noAnggota String?  @unique
+  status    String   @default("PENDING")
+  expiredAt DateTime?
+  alamat    String?
+  noHp      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transaksi Transaksi[]
+
+  @@map("User")
+}
+
+model Transaksi {
+  id            String   @id @default(cuid())
+  userId        String
+  type          String
+  jumlah        Float
+  buktiTransfer String?
+  keterangan    String?
+  status        String   @default("PENDING")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("Transaksi")
+}
+
+model Pengumuman {
+  id        String   @id @default(cuid())
+  judul     String
+  konten    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("Pengumuman")
+}
+
+model Kegiatan {
+  id        String   @id @default(cuid())
+  nama      String
+  tanggal   DateTime
+  lokasi    String
+  deskripsi String?
+  createdAt DateTime @default(now())
+
+  @@map("Kegiatan")
+}
